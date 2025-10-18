@@ -1,7 +1,6 @@
 import requests
 from django.conf import settings
 from django.shortcuts import render, redirect
-from django.contrib import messages
 
 API = settings.API_BASE_URL
 
@@ -11,8 +10,7 @@ def lista_productos(request):
         r = requests.get(f"{API}/productos", timeout=5)
         r.raise_for_status()
         productos = r.json()
-    except Exception as e:
-        messages.error(request, f"Error al cargar productos: {e}")
+    except Exception:
         productos = []
     return render(
         request, "supermercado/lista_productos.html", {"productos": productos}
@@ -32,12 +30,30 @@ def crear_producto(request):
         try:
             r = requests.post(f"{API}/productos", json=payload, timeout=5)
             if r.status_code == 201:
-                messages.success(request, "Producto creado.")
                 return redirect("lista_productos")
-            messages.error(request, f"Error al crear: {r.json()}")
+            # mostrar error simple en el formulario (sin messages)
+            try:
+                err = r.json().get("error", "Error desconocido")
+            except Exception:
+                err = "Error desconocido"
+            return render(request, "supermercado/crear_producto.html", {"error": err})
         except Exception as e:
-            messages.error(request, f"Error de red: {e}")
+            return render(
+                request, "supermercado/crear_producto.html", {"error": str(e)}
+            )
     return render(request, "supermercado/crear_producto.html")
+
+
+def detalle_producto(request, pid):
+    try:
+        r = requests.get(f"{API}/productos/{pid}", timeout=5)
+        if r.status_code == 404:
+            return redirect("lista_productos")
+        r.raise_for_status()
+        p = r.json()
+    except Exception:
+        return redirect("lista_productos")
+    return render(request, "supermercado/detalle_producto.html", {"p": p})
 
 
 def actualizar_producto(request, pid):
@@ -57,27 +73,40 @@ def actualizar_producto(request, pid):
         try:
             r = requests.put(f"{API}/productos/{pid}", json=payload, timeout=5)
             if r.ok:
-                messages.success(request, "Producto actualizado.")
                 return redirect("lista_productos")
-            messages.error(request, f"Error al actualizar: {r.text}")
+            try:
+                err = r.json().get("error", "Error desconocido")
+            except Exception:
+                err = "Error desconocido"
+            # recargar el detalle para completar el form
+            detalle = requests.get(f"{API}/productos/{pid}", timeout=5).json()
+            return render(
+                request,
+                "supermercado/actualizar_producto.html",
+                {"p": detalle, "error": err},
+            )
         except Exception as e:
-            messages.error(request, f"Error de red: {e}")
+            try:
+                detalle = requests.get(f"{API}/productos/{pid}", timeout=5).json()
+            except Exception:
+                detalle = {}
+            return render(
+                request,
+                "supermercado/actualizar_producto.html",
+                {"p": detalle, "error": str(e)},
+            )
 
-    # Cargar datos existentes para el form
+    # GET: cargar datos
     try:
-        detalle = requests.get(f"{API}/productos/{pid}", timeout=5).json()
+        p = requests.get(f"{API}/productos/{pid}", timeout=5).json()
     except Exception:
-        detalle = {}
-    return render(request, "supermercado/actualizar_producto.html", {"p": detalle})
+        p = {}
+    return render(request, "supermercado/actualizar_producto.html", {"p": p})
 
 
 def eliminar_producto(request, pid):
     try:
-        r = requests.delete(f"{API}/productos/{pid}", timeout=5)
-        if r.ok:
-            messages.success(request, "Producto eliminado.")
-        else:
-            messages.error(request, f"No se pudo eliminar: {r.text}")
-    except Exception as e:
-        messages.error(request, f"Error de red: {e}")
+        requests.delete(f"{API}/productos/{pid}", timeout=5)
+    except Exception:
+        pass
     return redirect("lista_productos")

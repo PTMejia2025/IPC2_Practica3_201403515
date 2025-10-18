@@ -40,6 +40,11 @@
             <td>{{ p.fecha_vencimiento|default:"—" }}</td>
             <td>
               <a
+                href="{% url 'detalle_producto' p.id %}"
+                class="btn btn-info btn-sm"
+                >Ver</a
+              >
+              <a
                 href="{% url 'actualizar_producto' p.id %}"
                 class="btn btn-primary btn-sm"
                 >Editar</a

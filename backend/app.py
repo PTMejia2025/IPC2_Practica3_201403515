@@ -42,6 +42,12 @@ def crear():
     faltantes = [k for k in req if k not in body]
     if faltantes:
         return jsonify({"error": f"Campos requeridos: {faltantes}"}), 400
+    if float(body["precio"]) < 0 or int(body["cantidad"]) < 0:
+        return (
+            jsonify({"error": "precio y cantidad deben ser valores no negativos"}),
+            400,
+        )
+
     try:
         float(body["precio"])
         int(body["cantidad"])
@@ -81,7 +87,12 @@ def actualizar(id):
     i = next((i for i, p in enumerate(data) if p["id"] == id), None)
     if i is None:
         return jsonify({"error": "No encontrado"}), 404
-    # actualiza solo campos presentes
+    # VALIDACION DE VALORES NEGATIVOS ANTES DE GUARDAR
+    if "precio" in body and float(body["precio"]) < 0:
+        return jsonify({"error": "El precio no puede ser negativo"}), 400
+    if "cantidad" in body and int(body["cantidad"]) < 0:
+        return jsonify({"error": "La cantidad no puede ser negativa"}), 400
+    # actualiza los campos 1u3 ll3tqeon
     for k in [
         "nombre",
         "categoria",
