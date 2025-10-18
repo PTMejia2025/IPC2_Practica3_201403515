@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Actualizar Usuario</title>
+    <title>Actualizar Producto</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="container mt-5">
-      <h1>Actualizar Usuario</h1>
+      <h1>Actualizar Producto</h1>
       <form method="post" class="mt-4">
         {% csrf_token %}
         <div class="form-group">
@@ -21,38 +21,73 @@
             name="nombre"
             id="nombre"
             class="form-control"
-            value="{{ usuario.nombre }}"
+            value="{{ p.nombre }}"
             required
           />
         </div>
+
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="categoria">Categoría</label>
           <input
             type="text"
-            name="email"
-            id="email"
+            name="categoria"
+            id="categoria"
             class="form-control"
-            value="{{ usuario.email }}"
+            value="{{ p.categoria }}"
             required
           />
         </div>
+
         <div class="form-group">
-          <label for="edad">Edad</label>
+          <label for="descripcion">Descripción</label>
+          <textarea name="descripcion" id="descripcion" class="form-control">
+{{ p.descripcion }}</textarea
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio (Q)</label>
           <input
             type="number"
-            name="edad"
-            id="edad"
+            step="0.01"
+            name="precio"
+            id="precio"
             class="form-control"
-            value="{{ usuario.edad }}"
+            value="{{ p.precio }}"
             required
           />
         </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad</label>
+          <input
+            type="number"
+            name="cantidad"
+            id="cantidad"
+            class="form-control"
+            value="{{ p.cantidad }}"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="fecha_vencimiento">Fecha de Vencimiento</label>
+          <input
+            type="date"
+            name="fecha_vencimiento"
+            id="fecha_vencimiento"
+            class="form-control"
+            value="{{ p.fecha_vencimiento }}"
+          />
+        </div>
+
         <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary"
+        <a href="{% url 'lista_productos' %}" class="btn btn-secondary"
           >Cancelar</a
         >
       </form>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

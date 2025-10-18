@@ -1,63 +1,110 @@
-from flask import Flask, jsonify, request
+# backend/app.py
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+import json, os, uuid
+from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # habilita CORS para desarrollo
 
-usuarios = [
-    {"id": 1, "nombre": "Juan Perez", "email": "juan@gmail.com", "edad": 30},
-    {"id": 2, "nombre": "Maria Gomez", "email": "maria@gmail.com", "edad": 25},
-    {"id": 3, "nombre": "Carlos Lopez", "email": "carlos@gmail.com", "edad": 35},
-]
+DATA_FILE = os.path.join(os.path.dirname(__file__), "inventario.json")
 
 
-def obtener_usuario_por_id(id):
-    for usuario in usuarios:
-        if usuario["id"] == id:
-            return usuario
-    return None
+def cargar():
+    if not os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f, ensure_ascii=False, indent=2)
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-# Obtener todos los usuarios ENDPOINTS
-@app.route("/usuarios", methods=["GET"])
-def obtener_usuarios():
-    return jsonify(usuarios)
+def guardar(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-# Obtener un solo usuario por ID
-@app.route("/usuarios/<int:id>", methods=["GET"])
-def obtener_usuario(id):
-    usuario = obtener_usuario_por_id(id)
-    if usuario:
-        return jsonify(usuario)
-    return jsonify({"error": "Usuario no encontrado"}), 404
+@app.get("/productos")
+def listar():
+    return jsonify(cargar())
 
 
-# Crear un usuario
-@app.route("/usuarios", methods=["POST"])
-def crear_usuario():
-    nuevo_usuario = request.json
-    nuevo_usuario["id"] = len(usuarios) + 1
-    usuarios.append(nuevo_usuario)
-    return jsonify(nuevo_usuario), 201
+@app.post("/productos")
+def crear():
+    body = request.get_json(force=True)
+    req = [
+        "nombre",
+        "categoria",
+        "descripcion",
+        "precio",
+        "cantidad",
+        "fecha_vencimiento",
+    ]
+    faltantes = [k for k in req if k not in body]
+    if faltantes:
+        return jsonify({"error": f"Campos requeridos: {faltantes}"}), 400
+    try:
+        float(body["precio"])
+        int(body["cantidad"])
+        if body["fecha_vencimiento"]:
+            datetime.fromisoformat(body["fecha_vencimiento"])
+    except Exception:
+        return jsonify({"error": "Tipos inválidos (precio/cantidad/fecha)"}), 400
+
+    data = cargar()
+    nuevo = {
+        "id": str(uuid.uuid4()),
+        "nombre": body["nombre"],
+        "categoria": body["categoria"],
+        "descripcion": body["descripcion"],
+        "precio": float(body["precio"]),
+        "cantidad": int(body["cantidad"]),
+        "fecha_vencimiento": body["fecha_vencimiento"] or None,
+    }
+    data.append(nuevo)
+    guardar(data)
+    return jsonify(nuevo), 201
 
 
-# Actualizar un usuario
-@app.route("/usuarios/<int:id>", methods=["PUT"])
-def actualizar_usuario(id):
-    for usuario in usuarios:
-        if usuario["id"] == id:
-            usuario.update(request.json)
-            return jsonify(usuario)
-    return jsonify({"error": "Usuario no encontrado"}), 404
+@app.get("/productos/<id>")
+def detalle(id):
+    data = cargar()
+    prod = next((p for p in data if p["id"] == id), None)
+    if not prod:
+        return jsonify({"error": "No encontrado"}), 404
+    return jsonify(prod)
 
 
-# Eliminar un usuario
-@app.route("/usuarios/<int:id>", methods=["DELETE"])
-def eliminar_usuario(id):
-    global usuarios
-    usuarios = [u for u in usuarios if u["id"] != id]
-    return jsonify({"message": "Usuario eliminado"}), 200
+@app.put("/productos/<id>")
+def actualizar(id):
+    body = request.get_json(force=True)
+    data = cargar()
+    i = next((i for i, p in enumerate(data) if p["id"] == id), None)
+    if i is None:
+        return jsonify({"error": "No encontrado"}), 404
+    # actualiza solo campos presentes
+    for k in [
+        "nombre",
+        "categoria",
+        "descripcion",
+        "precio",
+        "cantidad",
+        "fecha_vencimiento",
+    ]:
+        if k in body:
+            data[i][k] = body[k]
+    guardar(data)
+    return jsonify(data[i])
+
+
+@app.delete("/productos/<id>")
+def eliminar(id):
+    data = cargar()
+    n = len(data)
+    data = [p for p in data if p["id"] != id]
+    if len(data) == n:
+        return jsonify({"error": "No encontrado"}), 404
+    guardar(data)
+    return jsonify({"ok": True})
 
 
 if __name__ == "__main__":
