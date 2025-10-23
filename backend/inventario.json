@@ -9,12 +9,21 @@
     "fecha_vencimiento": "2026-11-22"
   },
   {
-    "id": "a668a19f-1738-4e7f-963e-4d8a3fe5a544",
-    "nombre": "pedro",
-    "categoria": "asfdas",
-    "descripcion": "safsfasdf",
-    "precio": 123.0,
-    "cantidad": 3,
+    "id": "5529e3e8-1f0e-4451-8f3d-62d78c396b18",
+    "nombre": "coditos",
+    "categoria": "Pasta",
+    "descripcion": "alimentos de pasta ",
+    "precio": 10.0,
+    "cantidad": 100,
+    "fecha_vencimiento": "2026-01-30"
+  },
+  {
+    "id": "5aff07fd-3efa-4eb6-95ce-3d74a75350a8",
+    "nombre": "Leche",
+    "categoria": "lacteos",
+    "descripcion": "se vende por unidad ",
+    "precio": "15.0",
+    "cantidad": "100",
     "fecha_vencimiento": "2025-10-30"
   }
 ]
