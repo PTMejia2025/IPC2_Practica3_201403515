@@ -1,20 +1,20 @@
 [
   {
-    "id": "cb48663e-e2f9-45de-9d0e-a082f60841ea",
-    "nombre": "fsf",
-    "categoria": "sdfsf",
-    "descripcion": "sfsdfsdf",
-    "precio": "23.0",
-    "cantidad": "25",
-    "fecha_vencimiento": "2026-11-22"
+    "id": "7019dbc9-c97e-4e53-a744-d90f1d7b27b6",
+    "nombre": "Leche",
+    "categoria": "Lacteo",
+    "descripcion": "Lacteos sin delactosante\r\n",
+    "precio": 15.2,
+    "cantidad": 20,
+    "fecha_vencimiento": "2025-11-27"
   },
   {
-    "id": "a668a19f-1738-4e7f-963e-4d8a3fe5a544",
-    "nombre": "pedro",
-    "categoria": "asfdas",
-    "descripcion": "safsfasdf",
-    "precio": 123.0,
-    "cantidad": 3,
-    "fecha_vencimiento": "2025-10-30"
+    "id": "e0e6093e-760d-4b90-9788-eea8d2aab1a9",
+    "nombre": "Agua",
+    "categoria": "Salvavidas",
+    "descripcion": "agua para beber",
+    "precio": 11.0,
+    "cantidad": 150,
+    "fecha_vencimiento": "2025-10-31"
   }
 ]

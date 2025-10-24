@@ -92,7 +92,7 @@ def actualizar(id):
         return jsonify({"error": "El precio no puede ser negativo"}), 400
     if "cantidad" in body and int(body["cantidad"]) < 0:
         return jsonify({"error": "La cantidad no puede ser negativa"}), 400
-    # actualiza los campos 1u3 ll3tqeon
+    # actualiza los campos
     for k in [
         "nombre",
         "categoria",
