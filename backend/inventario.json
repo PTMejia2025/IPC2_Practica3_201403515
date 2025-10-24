@@ -9,6 +9,7 @@
     "fecha_vencimiento": "2025-11-27"
   },
   {
+<<<<<<< HEAD
     "id": "e0e6093e-760d-4b90-9788-eea8d2aab1a9",
     "nombre": "Agua",
     "categoria": "Salvavidas",
@@ -16,5 +17,23 @@
     "precio": 11.0,
     "cantidad": 150,
     "fecha_vencimiento": "2025-10-31"
+=======
+    "id": "5529e3e8-1f0e-4451-8f3d-62d78c396b18",
+    "nombre": "coditos",
+    "categoria": "Pasta",
+    "descripcion": "alimentos de pasta ",
+    "precio": 10.0,
+    "cantidad": 100,
+    "fecha_vencimiento": "2026-01-30"
+  },
+  {
+    "id": "5aff07fd-3efa-4eb6-95ce-3d74a75350a8",
+    "nombre": "Leche",
+    "categoria": "lacteos",
+    "descripcion": "se vende por unidad ",
+    "precio": "15.0",
+    "cantidad": "100",
+    "fecha_vencimiento": "2025-10-30"
+>>>>>>> 795109fd4728d28b4643b24318f2ab706c16595f
   }
 ]

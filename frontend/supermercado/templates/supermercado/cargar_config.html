@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Cargar configuración</title>
+</head>
+<body>
+  <h1>Cargar configuración (XML)</h1>
+
+  {% if messages %}
+    <ul>
+      {% for m in messages %}
+        <li>{{ m }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="archivo_xml" accept=".xml" required />
+    <button type="submit">Subir</button>
+  </form>
+
+  {% if resultado %}
+    <h3>Resultado</h3>
+    <pre>{{ resultado|safe }}</pre>
+  {% endif %}
+
+  <p><a href="{% url 'supermercado:home' %}">Volver</a></p>
+</body>
+</html>
